@@ -1,0 +1,48 @@
+
+services:
+  calencare-backend:
+    build: .
+    ports:
+      - "5225:8080"
+    environment:
+      SPRING_APPLICATION_NAME: Calencare-Api
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/calencare
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Libellus5271
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_DEFER_DATASOURCE_INITIALIZATION: true
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+      SPRING_JPA_SHOW_SQL: true
+      SPRING_MAIL_USERNAME: nr.calencare@gmail.com
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED: true
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_PASSWORD: fzio pdsn fmyq xlnf
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: true
+      SPRING_MAIL_PROPERTIES_MAIL_TRANSPORT_PROTOCOL: smtp
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: true
+      JWT_EXPIRATION: 3600000
+      JWT_SECRET: RXhpc3RlIHVtYSB0ZW9yaWEgcXVlIGRpeiBxdWUsIHNlIHVtIGRpYSBhbGd16W0gZGVzY29icmlyIGV4YXRhbWVudGUgcGFyYSBxdWUgc2VydmUgbyBVbml2ZXJzbyBlIHBvciBxdWUgZWxlIGVzdOEgYXF1aSwgZWxlIGRlc2FwYXJlY2Vy4SBpbnN0YW50YW5lYW1lbnRlIGUgc2Vy4SBzdWJzdGl0de1kbyBwb3IgYWxnbyBhaW5kYSBtYWlzIGVzdHJhbmhvIGUgaW5leHBsaWPhdmVsLiBFeGlzdGUgdW1hIHNlZ3VuZGEgdGVvcmlhIHF1ZSBkaXogcXVlIGlzc28gauEgYWNvbnRlY2V1Li4u
+      SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 200MB
+      SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE: 200MB
+    networks:
+      - calencare
+
+  mysql:
+    image: mysql:8.0.37
+    environment:
+      MYSQL_ROOT_PASSWORD: Libellus5271
+      MYSQL_DATABASE: calencare
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./Data:/docker-entrypoint-initdb.d
+    networks:
+      - calencare
+
+networks:
+  calencare:
+    driver: bridge
+
+volumes:
+  mysql_data:

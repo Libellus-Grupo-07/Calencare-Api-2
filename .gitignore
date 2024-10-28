@@ -1,0 +1,20 @@
+# Arquivos gerados pelo Maven
+target/
+pom.xml.backup
+
+# Arquivos de cache e logs
+target/site
+target/logs
+
+#src/main/resources/application.properties
+#src/main/resources/application.yml
+
+# Arquivos de IDE
+.idea/
+nbproject/
+
+# Outros arquivos que você deseja ignorar
+bin/
+out/
+*.iml
+*.log
