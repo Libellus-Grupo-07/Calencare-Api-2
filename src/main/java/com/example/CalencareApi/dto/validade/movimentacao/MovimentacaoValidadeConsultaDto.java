@@ -12,4 +12,5 @@ public class MovimentacaoValidadeConsultaDto {
     private Integer quantidade;
     private LocalDateTime dtCriacao;
     private Integer idValidade;
+    private Integer idProduto;
 }

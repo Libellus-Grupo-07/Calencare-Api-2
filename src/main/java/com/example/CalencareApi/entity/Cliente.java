@@ -49,6 +49,6 @@ public class Cliente implements AgendamentoObserver {
                                 agendamento.getDia().format(formatter),
                                 agendamento.getHorario(),
                                 agendamento.getServicoPreco().getServico().getNome(),
-                                agendamento.getServicoPreco().getPreco()));
+                                agendamento.getPreco()));
     }
 }

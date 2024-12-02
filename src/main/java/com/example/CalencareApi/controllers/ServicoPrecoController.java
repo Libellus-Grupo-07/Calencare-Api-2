@@ -40,7 +40,7 @@ public class ServicoPrecoController {
         return ResponseEntity.status(200).body(servicoDto);
     }
 
-    @PutMapping ("/nao-usar/{id}/{idCategoria}")
+    /*@PutMapping ("/nao-usar/{id}/{idCategoria}")
     public ResponseEntity<ServicoPrecoConsultaDto> atualizar(
             @PathVariable Integer id,
             @PathVariable Integer idCategoria,
@@ -55,7 +55,7 @@ public class ServicoPrecoController {
 
       ServicoPrecoConsultaDto servicoPrecoAtualizadoDto = this.service.atualizar(id,servicoDto,idCategoria);
       return ResponseEntity.status(200).body(servicoPrecoAtualizadoDto);
-    }
+    }*/
 
     @PatchMapping("/nao-usar/{id}/preco")
     public ResponseEntity<ServicoPrecoConsultaDto> atualizarPrecoServico(

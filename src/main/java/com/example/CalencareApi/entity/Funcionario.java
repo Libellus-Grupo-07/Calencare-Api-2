@@ -25,7 +25,7 @@ public class Funcionario implements AgendamentoObserver{
     private String senha;
     private String perfilAcesso;
     private Integer bitStatus;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Empresa empresa;
     @CreationTimestamp
     private LocalDateTime dtCriacao;

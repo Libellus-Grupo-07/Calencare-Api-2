@@ -99,6 +99,9 @@ public class AgendamentoController {
         agendamentoConvertido.setCliente(cliente.get());
         agendamentoConvertido.setFuncionario(funcionario.get());
         agendamentoConvertido.setServicoPreco(servicoPreco.get());
+        agendamentoConvertido.setPreco(servicoPreco.get().getPreco());
+        agendamentoConvertido.setComissao(servicoPreco.get().getComissao());
+        agendamentoConvertido.setDuracao(servicoPreco.get().getDuracao());
         Agendamento agendamentoSave = this.repository.save(agendamentoConvertido);
         AgendamentoConsultaDto dto = AgendamentoMapper.toDto(agendamentoSave);
         notificarAdmins(agendamentoSave, funcionario.get().getEmpresa().getId());
@@ -200,6 +203,9 @@ public class AgendamentoController {
         buscaAgendamento.get().setCliente((Cliente) clienteOpt);
         buscaAgendamento.get().setFuncionario((Funcionario) funcionarioOpt);
         buscaAgendamento.get().setServicoPreco((ServicoPreco) servicoPrecoOpt);
+        buscaAgendamento.get().setPreco(((ServicoPreco) servicoPrecoOpt).getPreco());
+        buscaAgendamento.get().setComissao(((ServicoPreco) servicoPrecoOpt).getComissao());
+        buscaAgendamento.get().setDuracao(((ServicoPreco) servicoPrecoOpt).getDuracao());
 
         Agendamento agendamentoAtualizado = repository.save(buscaAgendamento.get());
         AgendamentoConsultaDto dto = AgendamentoMapper.toDto(agendamentoAtualizado);

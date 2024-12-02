@@ -17,7 +17,7 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Intege
 
     Optional<Funcionario> findByEmail (String email);
 
-    @Query("SELECT f FROM Funcionario f WHERE f.perfilAcesso = 'Administrador' AND f.bitStatus NOT IN(4) AND f.empresa.id = :idEmpresa")
+    @Query("SELECT f FROM Funcionario f WHERE f.perfilAcesso = UPPER('Administrador') AND f.bitStatus NOT IN(4) AND f.empresa.id = :idEmpresa")
     List<Funcionario> findAllAdmins(Integer idEmpresa);
 
     Optional<Funcionario> findByNome (String nome);

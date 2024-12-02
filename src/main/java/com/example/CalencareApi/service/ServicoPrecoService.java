@@ -1,13 +1,17 @@
 package com.example.CalencareApi.service;
 
+import com.example.CalencareApi.dto.log.ServicoPrecoLogCriacaoDto;
 import com.example.CalencareApi.dto.servico.ServicoCriacaoDto;
 import com.example.CalencareApi.dto.servicoPreco.*;
 import com.example.CalencareApi.entity.Empresa;
 import com.example.CalencareApi.entity.Servico;
 import com.example.CalencareApi.entity.ServicoPreco;
+import com.example.CalencareApi.entity.log.ServicoPrecoLog;
 import com.example.CalencareApi.exceptions.ServicoPrecoNomeJaExisteException;
 import com.example.CalencareApi.mapper.ServicoPrecoMapper;
+import com.example.CalencareApi.mapper.log.ServicoPrecoLogMapper;
 import com.example.CalencareApi.repository.ServicoPrecoRepository;
+import com.example.CalencareApi.service.log.ServicoPrecoLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,7 @@ public class ServicoPrecoService {
     @Autowired private ServicoPrecoRepository repository;
     @Autowired private ServicoService servicoService;
     @Autowired private EmpresaService empresaService;
+    @Autowired private ServicoPrecoLogService servicoPrecoLogService;
 
     public ServicoPrecoConsultaDto buscarPorId(Integer id){
         Optional<ServicoPreco> servicoPreco = this.repository.findById(id);
@@ -40,7 +45,7 @@ public class ServicoPrecoService {
         return ServicoPrecoMapper.toDto(this.repository.findAll());
     }
 
-    public ServicoPrecoConsultaDto atualizar(
+    /*public ServicoPrecoConsultaDto atualizar(
             Integer id,
             ServicoPrecoAtualizacaoDto servicoDto,
             Integer idCategoria){
@@ -60,9 +65,9 @@ public class ServicoPrecoService {
             buscaNomeServico = servicoService.cadastrar(novoServico, idCategoria);
         }
 
-        /*if (buscaNomeServico.getId() == repository.buscarServicoPrecoByServicoId(buscaNomeServico.getId())){
+        *//*if (buscaNomeServico.getId() == repository.buscarServicoPrecoByServicoId(buscaNomeServico.getId())){
             throw new ServicoPrecoNomeJaExisteException();
-        }*/
+        }*//*
 
         //String nome = (servicoDto.getNome() == null || servicoDto.getNome().isEmpty()) ?  buscaNomeServico.getNome() : servicoDto.getNome();
         String descricao = (servicoDto.getDescricao() == null || servicoDto.getDescricao().isEmpty()) ?
@@ -83,7 +88,7 @@ public class ServicoPrecoService {
         ServicoPreco servicoPrecoAtualizado = this.repository.save(servicoEntity);
         ServicoPrecoConsultaDto servicoPrecoAtualizadoDto = ServicoPrecoMapper.toDto(servicoPrecoAtualizado);
         return servicoPrecoAtualizadoDto;
-    }
+    }*/
 
     public ServicoPrecoConsultaDto atualizaPrecoServico(Integer id, ServicoPrecoAtualizacaoPrecoDto servicoDto){
         Optional<ServicoPreco> servicoAtualizar = this.repository.findById(id);
@@ -206,6 +211,15 @@ public class ServicoPrecoService {
         Double comissao = (servicoDto.getComissao() == null) ?  servicoEntity.getComissao() : servicoDto.getComissao();
         Integer bitStatus = (servicoDto.getBitStatus() == null) ? servicoEntity.getBitStatus() : servicoDto.getBitStatus();
 
+        ServicoPrecoLogCriacaoDto log = new ServicoPrecoLogCriacaoDto();
+        log.setPrecoAnterior(servicoEntity.getPreco());
+        log.setPrecoAtual(preco);
+        log.setComissaoAnterior(servicoEntity.getComissao());
+        log.setComissaoAtual(comissao);
+        log.setDuracaoAnterior(servicoEntity.getDuracao());
+        log.setDuracaoAtual(duracao);
+        log.setServicoPrecoId(servicoEntity.getId());
+
         servicoEntity.setDescricao(descricao);
         servicoEntity.setPreco(preco);
         servicoEntity.setDuracao(duracao);
@@ -213,9 +227,9 @@ public class ServicoPrecoService {
         servicoEntity.setBitStatus(bitStatus);
         servicoEntity.setServico(buscaNomeServico);
 
+        servicoPrecoLogService.salvar(log);
         ServicoPreco servicoPrecoAtualizado = this.repository.save(servicoEntity);
-        ServicoPrecoConsultaDto servicoPrecoAtualizadoDto = ServicoPrecoMapper.toDto(servicoPrecoAtualizado);
-        return servicoPrecoAtualizadoDto;
+        return ServicoPrecoMapper.toDto(servicoPrecoAtualizado);
     }
 
     public Boolean excluirPorId(Integer idEmpresa, Integer id){

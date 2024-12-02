@@ -17,8 +17,7 @@ import java.util.List;
 public class ValidadeService {
 
     @Autowired ValidadeRepository validadeRepository;
-    @Autowired
-    MovimentacaoValidadeRepository movimentacaoValidadeRepository;
+    @Autowired MovimentacaoValidadeRepository movimentacaoValidadeRepository;
     @Autowired ProdutoRepository produtoRepository;
 
     public ValidadeConsultaDto cadastrar(ValidadeCriacaoDto validadeCriacaoDto) {
@@ -54,5 +53,10 @@ public class ValidadeService {
             return true;
         }
         return false;
+    }
+
+    public List<ValidadeConsultaDto> buscarPorEmpresaId(Integer idEmpresa) {
+        List<Validade> validades = validadeRepository.findByEmpresaId(idEmpresa);
+        return ValidadeMapper.toDto(validades);
     }
 }

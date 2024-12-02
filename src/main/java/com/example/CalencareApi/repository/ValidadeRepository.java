@@ -12,6 +12,9 @@ public interface ValidadeRepository extends JpaRepository<Validade, Integer> {
     @Query("SELECT v FROM Validade v WHERE v.produto.id = :idProduto AND v.bitStatus = 1 ORDER BY v.dtValidade")
     List<Validade> findByProdutoId(Integer idProduto);
 
+    @Query("SELECT v FROM Validade v WHERE v.produto.empresa.id = :idEmpresa AND v.bitStatus = 1 ORDER BY v.dtValidade")
+    List<Validade> findByEmpresaId(Integer idEmpresa);
+
     @Query("SELECT v from Validade v WHERE v.bitStatus = 1 AND v.id = :id")
     Optional<Validade> findById(Integer id);
 }

@@ -21,6 +21,7 @@ public class ProdutoService {
     @Autowired private EmpresaService empresaService;
     @Autowired private CategoriaProdutoService categoriaProdutoService;
     @Autowired private ValidadeService validadeService;
+    //@Autowired private MovimentacaoValidadeService movimentacaoValidadeService;
 
     public ProdutoConsultaDto cadastrar(
             ProdutoCriacaoDto dto) {
@@ -42,21 +43,11 @@ public class ProdutoService {
         return ProdutoMapper.toDto(produtoCadastrado);
     }
 
-    public ProdutoConsultaDto buscarPorIdPorEmpresa(Integer id, Integer idEmpresa) {
-        Produto produto = this.produtoRepository.findByIdAndEmpresaId(id, idEmpresa);
-        Empresa empresa = empresaService.buscarEntidadePorId(idEmpresa);
-        if (produto == null) {
-            return null;
-        }
-        if (!produto.getEmpresa().equals(empresa)) {
-            return null;
-        }
-        return ProdutoMapper.toDto(produto);
-    }
+    /*private void settarQntdEstoque (ProdutoConsultaDto produtoConsultaDto) {
+        Integer qntd = movimentacaoValidadeService.retornarQuantidadeTotalProduto(produtoConsultaDto.getId());
+        produtoConsultaDto.setQntdTotalEstoque(qntd);
+    }*/
 
-    public Produto buscarEntidadePorId(Integer id) {
-        return this.produtoRepository.findById(id).orElse(null);
-    }
 
 
     public ProdutoConsultaDto atualizar(ProdutoAtualizarDto dto,
@@ -65,7 +56,10 @@ public class ProdutoService {
         if (dto == null) {
             return null;
         }
-        Produto produtoAtualizacao = this.buscarEntidadePorId(idProduto);
+        Produto produtoAtualizacao = this.produtoRepository.findById(idProduto).orElse(null);
+        if (produtoAtualizacao == null) {
+            return null;
+        }
         CategoriaProduto categoriaProduto = categoriaProdutoService
                 .buscarEntidadePorId(produtoAtualizacao.getCategoriaProduto().getId());
         if (dto.getCategoriaProdutoId() != null) {
@@ -88,13 +82,21 @@ public class ProdutoService {
         return ProdutoMapper.toDto(produtoAtualizado);
     }
 
-    public List<ProdutoConsultaDto> buscarPorNomeOuMarca(Integer idEmpresa, String nome) {
-        return ProdutoMapper.toDto(this.produtoRepository.findByNomeOrMarca(idEmpresa, nome));
+    /*public List<ProdutoConsultaDto> buscarPorNomeOuMarca(Integer idEmpresa, String nome) {
+        List<ProdutoConsultaDto> produtos = ProdutoMapper.toDto(this.produtoRepository.findByNomeOrMarca(idEmpresa, nome));
+        *//*for (ProdutoConsultaDto produto : produtos) {
+            produto.setQntdTotalEstoque(movimentacaoValidadeService.retornarQuantidadeTotalProduto(produto.getId()));
+        }*//*
+        return produtos;
     }
 
     public List<ProdutoConsultaDto> listarPorEmpresaId(Integer idEmpresa) {
-        return ProdutoMapper.toDto(this.produtoRepository.findAllByEmpresaId(idEmpresa));
-    }
+        List<ProdutoConsultaDto> produtos = ProdutoMapper.toDto(this.produtoRepository.findAllByEmpresaId(idEmpresa));
+        *//*for (ProdutoConsultaDto produto : produtos) {
+            produto.setQntdTotalEstoque(movimentacaoValidadeService.retornarQuantidadeTotalProduto(produto.getId()));
+        }*//*
+        return produtos;
+    }*/
 
     public void deletarPorId(Integer id, Integer idEmpresa) {
         Produto produto = this.produtoRepository.findByIdAndEmpresaId(id, idEmpresa);

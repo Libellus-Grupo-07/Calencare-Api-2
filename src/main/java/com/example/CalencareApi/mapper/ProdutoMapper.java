@@ -4,6 +4,7 @@ import com.example.CalencareApi.dto.produto.ProdutoAtualizarDto;
 import com.example.CalencareApi.dto.produto.ProdutoConsultaDto;
 import com.example.CalencareApi.dto.produto.ProdutoCriacaoDto;
 import com.example.CalencareApi.entity.Produto;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,6 +30,7 @@ public class ProdutoMapper {
         produto.setCategoriaProdutoNome(dto.getCategoriaProduto().getNome());
         produto.setCategoriaProdutoId(dto.getCategoriaProduto().getId());
         produto.setEmpresaId(dto.getEmpresa().getId());
+        produto.setQntdTotalEstoque(0);
         return produto;
     }
 

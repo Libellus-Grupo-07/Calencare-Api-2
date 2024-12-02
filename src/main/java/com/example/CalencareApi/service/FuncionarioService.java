@@ -127,6 +127,11 @@ public class FuncionarioService {
         return funcionarioRepository.findAllAdmins(idEmpresa);
     }
 
+    public List<FuncionarioConsultaDto> listarAdminDto(Integer idEmpresa) {
+        List<FuncionarioConsultaDto> funcionarios = FuncionarioMapper.toDto(funcionarioRepository.findAllAdmins(idEmpresa));
+        return funcionarios;
+    }
+
     public FuncionarioConsultaDto alterarBitStatus(Integer id, FuncionarioAtualizacaoStatusDto funcionarioBitStatus) {
         Funcionario funcionario = funcionarioRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(404, "Usuário não encontrado", null));

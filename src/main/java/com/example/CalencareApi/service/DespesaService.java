@@ -7,12 +7,9 @@ import com.example.CalencareApi.entity.CategoriaDespesa;
 import com.example.CalencareApi.entity.Despesa;
 import com.example.CalencareApi.entity.Empresa;
 import com.example.CalencareApi.mapper.DespesaMapper;
-import com.example.CalencareApi.repository.CategoriaDespesaRepository;
 import com.example.CalencareApi.repository.DespesaRepository;
-import com.example.CalencareApi.repository.EmpresaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
@@ -103,6 +100,7 @@ public class DespesaService {
                 despesaDto.getDtPagamento() == null ? despesaAtualizacao.getDtPagamento() : despesaDto.getDtPagamento());
         despesaAtualizacao.setBitStatus(
                 despesaDto.getBitStatus() == null ? despesaAtualizacao.getBitStatus() : despesaDto.getBitStatus());
+        despesaAtualizacao.setCategoriaDespesa(categoriaDespesa);
 
         return DespesaMapper.toDto(despesaRepository.save(despesaAtualizacao));
     }

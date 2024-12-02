@@ -23,8 +23,8 @@ public class Empresa {
     private Integer intervaloAtendimento;
     @CreationTimestamp
     private LocalDateTime dtCriacao;
-    @OneToMany(mappedBy = "empresa")
+    @OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY)
     private List<Funcionario> funcionarios;
-    @OneToMany(mappedBy = "empresa")
+    @OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY)
     private List<HorarioFuncionamento> horarioFuncionamentos;
 }

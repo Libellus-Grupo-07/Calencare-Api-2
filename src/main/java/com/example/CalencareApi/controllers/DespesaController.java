@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.Year;
 import java.util.List;
@@ -34,6 +33,15 @@ public class DespesaController {
         }
         DespesaConsultaDto savedDto = service.cadastrar(dto, idEmpresa, idCategoria);
         return ResponseEntity.ok(savedDto);
+    }
+
+    @GetMapping("/{idEmpresa}")
+    public ResponseEntity<List<DespesaConsultaDto>> listar(@PathVariable Integer idEmpresa) {
+        List<DespesaConsultaDto> despesas = service.listarPorEmpresaId(idEmpresa);
+        if (despesas.isEmpty()) {
+            return ResponseEntity.status(204).build();
+        }
+        return ResponseEntity.ok(despesas);
     }
 
     @GetMapping("/{idEmpresa}/{id}")
@@ -90,14 +98,14 @@ public class DespesaController {
         return ResponseEntity.ok(despesas);
     }
 
-    @GetMapping("/total/{idEmpresa}/{mes}/{ano}")
+    /*@GetMapping("/total/{idEmpresa}/{mes}/{ano}")
     public ResponseEntity<Double> calcularDespesaTotalMes(
             @PathVariable Integer idEmpresa,
             @PathVariable Integer mes,
             @PathVariable Integer ano) {
         Double total = service.calcularDespesaTotalMes(idEmpresa, Month.of(mes), Year.of(ano));
         return ResponseEntity.ok(total);
-    }
+    }*/
 
     @GetMapping("/total/{idEmpresa}/{data}")
     public ResponseEntity<Double> calcularDespesaTotalDia(
@@ -120,5 +128,4 @@ public class DespesaController {
         }
         return ResponseEntity.ok(despesas);
     }
-
 }

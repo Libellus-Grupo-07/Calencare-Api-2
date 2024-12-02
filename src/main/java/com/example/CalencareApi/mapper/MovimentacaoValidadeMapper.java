@@ -26,6 +26,7 @@ public class MovimentacaoValidadeMapper {
         movimentacaoValidadeConsultaDto.setQuantidade(movimentacaoValidade.getQuantidade());
         movimentacaoValidadeConsultaDto.setDtCriacao(movimentacaoValidade.getDtCriacao());
         movimentacaoValidadeConsultaDto.setIdValidade(movimentacaoValidade.getValidade().getId());
+        movimentacaoValidadeConsultaDto.setIdProduto(movimentacaoValidade.getValidade().getProduto().getId());
         return movimentacaoValidadeConsultaDto;
     }
 

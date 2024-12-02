@@ -10,6 +10,7 @@ import com.example.CalencareApi.mapper.AgendamentoMapper;
 import com.example.CalencareApi.mapper.FuncionarioMapper;
 import com.example.CalencareApi.repository.AgendamentoRepository;
 import com.example.CalencareApi.repository.EmpresaRepository;
+import com.example.CalencareApi.service.log.ServicoPrecoLogService;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import jakarta.transaction.Transactional;
@@ -43,6 +44,7 @@ public class AgendamentoService {
     @Autowired private HorarioFuncionamentoService horarioFuncionamentoService;
     @Autowired private EmpresaRepository empresaRepository;
     @Autowired private GoogleCalendarService googleCalendarService;
+    @Autowired private ServicoPrecoLogService servicoPrecoLogService;
 
     public final String[] diasDaSemana = { "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado" };
     public final String[] horasDoDia = {
@@ -126,7 +128,6 @@ public class AgendamentoService {
     public List<AgendamentoConsultaDto> getAgendamentosEmAndamento(Integer empresaId) {
         return AgendamentoMapper.toDto(agendamentoRepository.getAgendamentosEmAndamento(empresaId));
     }
-
 
     public List<AgendamentoObserver> getListaAdmins(Integer idEmpresa) {
         observers.addAll(funcionarioService.listarAdmin(idEmpresa));
@@ -244,8 +245,9 @@ public class AgendamentoService {
         if (dataInicio == null || dataFim == null || empresaId == null) {
             throw new ResponseStatusException(400, "Um ou mais Parâmetros nulos", null);
         }
-        List<Agendamento> agendamentos = agendamentoRepository.findByFuncionarioEmpresaIdAndDtHoraBetween(empresaId,dataInicio, dataFim);
-        return AgendamentoMapper.toDto(agendamentos);
+        List<AgendamentoConsultaDto> agendamentos = AgendamentoMapper.toDto(
+                agendamentoRepository.findByFuncionarioEmpresaIdAndDtHoraBetween(empresaId,dataInicio, dataFim));
+        return agendamentos;
     }
 
     public List<AgendamentoConsultaDto> getAgendamentosPendentesEmpresa(Integer empresaId) {
@@ -270,7 +272,7 @@ public class AgendamentoService {
 
         for (Agendamento agendamento : agendamentos) {
             if (agendamento.getDtHora().toLocalTime().plusMinutes(
-                    agendamento.getServicoPreco().getDuracao()).isBefore(agora)) {
+                    agendamento.getDuracao()).isBefore(agora)) {
                 agendamento.setBitStatus(2);
                 agendamentoRepository.save(agendamento);
                 //System.out.println("Executado");
@@ -394,9 +396,18 @@ public class AgendamentoService {
         return agendamentoRepository.getReceitaDiaria(empresaId, dataInicioTransformada, dataFimTransformada);
     }
 
-
-
-
+    /*public void validarValoresAgendamento(List<AgendamentoConsultaDto> dto) {
+        for (int i = 0 ; i < dto.size(); i++) {
+            AgendamentoConsultaDto agendamento = dto.get(i);
+            ServicoPrecoLogConsultaDto servicoPrecoLog = servicoPrecoLogService
+                    .buscarUltimaAlteracao(agendamento.getServicoPrecoId(), LocalDateTime.now());
+            if (servicoPrecoLog != null) {
+                dto.get(i).setValorServico(servicoPrecoLog.getPrecoAnterior());
+                dto.get(i).setComissao(servicoPrecoLog.getComissaoAnterior());
+                dto.get(i).setDuracaoServico(servicoPrecoLog.getDuracaoAnterior());
+            }
+        }
+    }*/
 
     // Validações
 

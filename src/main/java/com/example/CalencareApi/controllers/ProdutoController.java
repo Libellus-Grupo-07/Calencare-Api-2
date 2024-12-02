@@ -3,6 +3,8 @@ package com.example.CalencareApi.controllers;
 import com.example.CalencareApi.dto.produto.ProdutoAtualizarDto;
 import com.example.CalencareApi.dto.produto.ProdutoConsultaDto;
 import com.example.CalencareApi.dto.produto.ProdutoCriacaoDto;
+import com.example.CalencareApi.mapper.MovimentacaoValidadeMapper;
+import com.example.CalencareApi.service.MovimentacaoValidadeService;
 import com.example.CalencareApi.service.ProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +18,11 @@ import java.util.Objects;
 public class ProdutoController {
 
     private final ProdutoService produtoService;
+    private final MovimentacaoValidadeService movimentacaoValidadeService;
 
-    public ProdutoController(ProdutoService produtoService) {
+    public ProdutoController(ProdutoService produtoService, MovimentacaoValidadeService movimentacaoValidadeService) {
         this.produtoService = produtoService;
+        this.movimentacaoValidadeService = movimentacaoValidadeService;
     }
 
     @PostMapping
@@ -31,7 +35,7 @@ public class ProdutoController {
     @GetMapping("/{idEmpresa}/{id}")
     public ResponseEntity<ProdutoConsultaDto> buscarPorId(@PathVariable Integer idEmpresa,
                                                           @PathVariable Integer id) {
-        ProdutoConsultaDto dto = produtoService.buscarPorIdPorEmpresa(id, idEmpresa);
+        ProdutoConsultaDto dto = movimentacaoValidadeService.buscarPorIdPorEmpresa(id, idEmpresa);
         if (Objects.isNull(dto)) { return ResponseEntity.status(404).build(); }
         return ResponseEntity.ok(dto);
     }
@@ -56,15 +60,28 @@ public class ProdutoController {
     @GetMapping("/{idEmpresa}/buscar-nome")
     public ResponseEntity<List<ProdutoConsultaDto>> buscarPorNomeOuMarca(@PathVariable Integer idEmpresa,
                                                                   @RequestParam String nome) {
-        List<ProdutoConsultaDto> produtos = produtoService.buscarPorNomeOuMarca(idEmpresa, nome);
+        List<ProdutoConsultaDto> produtos = movimentacaoValidadeService.buscarPorNomeOuMarca(idEmpresa, nome);
         if (produtos.isEmpty()) { return ResponseEntity.status(204).build(); }
         return ResponseEntity.ok(produtos);
     }
 
     @GetMapping("/{idEmpresa}/buscar-todos")
     public ResponseEntity<List<ProdutoConsultaDto>> buscarTodos(@PathVariable Integer idEmpresa) {
-        List<ProdutoConsultaDto> produtos = produtoService.listarPorEmpresaId(idEmpresa);
+        List<ProdutoConsultaDto> produtos = movimentacaoValidadeService.listarPorEmpresaId(idEmpresa);
         if (produtos.isEmpty()) { return ResponseEntity.status(204).build(); }
+        return ResponseEntity.ok(produtos);
+    }
+
+    // retornar produtos com estoque em alerta
+    @GetMapping("/alerta-estoque/{idEmpresa}")
+    public ResponseEntity<List<ProdutoConsultaDto>> listarProdutosAlertaEstoque(@PathVariable Integer idEmpresa) {
+        List<ProdutoConsultaDto> produtos = movimentacaoValidadeService.listarProdutosAlertaEstoque(idEmpresa);
+        if (produtos == null) {
+            return ResponseEntity.noContent().build();
+        }
+        if (produtos.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(produtos);
     }
 }

@@ -28,10 +28,10 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
     @Query("SELECT COUNT(a) FROM Agendamento a WHERE a.dtHora >= :dataInicio AND a.dtHora < :dataFim AND a.funcionario.empresa.id = :empresaId")
     Integer countTotaisAgendamentosDoDia(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim, @Param("empresaId") Integer empresaId);
 
-    @Query("SELECT SUM(ap.preco) FROM Agendamento a JOIN a.servicoPreco ap WHERE a.dtHora >= :dataInicio AND a.dtHora < :dataFim")
+    @Query("SELECT SUM(a.preco) FROM Agendamento a WHERE a.dtHora >= :dataInicio AND a.dtHora < :dataFim")
     Double calcularPotencialLucroDoDia(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim);
 
-    @Query("SELECT SUM(ap.preco) FROM Agendamento a JOIN a.servicoPreco ap WHERE a.dtHora >= :dataInicio AND a.dtHora < :dataFim AND a.funcionario.empresa.id = :empresaId")
+    @Query("SELECT SUM(a.preco) FROM Agendamento a WHERE a.dtHora >= :dataInicio AND a.dtHora < :dataFim AND a.funcionario.empresa.id = :empresaId")
     Double calcularPotencialLucroDoDia(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim, @Param("empresaId") Integer empresaId);
 
     @Query("SELECT a.servicoPreco.servico.nome FROM Agendamento a GROUP BY a.servicoPreco.servico.nome ORDER BY COUNT(a) DESC")
@@ -72,7 +72,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
     @Query("SELECT COUNT(a) FROM Agendamento a WHERE a.funcionario.empresa.id = :empresaId AND CAST(a.dtHora AS date) = :date AND a.bitStatus = 2")
     Integer getAgendamentosStatusPendente(@Param("empresaId") Integer empresaId, @Param("date") LocalDate date);
 
-    @Query("SELECT SUM(a.servicoPreco.preco) FROM Agendamento a WHERE a.funcionario.empresa.id = :empresaId AND CAST(a.dtHora AS date) = :date AND a.bitStatus = 5")
+    @Query("SELECT SUM(a.preco) FROM Agendamento a WHERE a.funcionario.empresa.id = :empresaId AND CAST(a.dtHora AS date) = :date AND a.bitStatus = 5")
     Double getLucroTotalDoDia(@Param("empresaId") Integer empresaId, @Param("date") LocalDate date);
 
     @Query("SELECT COUNT(a) FROM Agendamento a WHERE a.funcionario.empresa.id = :empresaId AND CAST(a.dtHora AS date) = :date AND a.bitStatus = 5")
@@ -81,7 +81,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
     @Query("SELECT new map(a.funcionario.nome as nome, COUNT(a) as count) FROM Agendamento a WHERE a.funcionario.empresa.id = :empresaId AND CAST(a.dtHora AS date) = :date GROUP BY a.funcionario.nome")
     List<Map<String, Object>> getAgendamentosDoDiaPorProfissional(@Param("empresaId") Integer empresaId, @Param("date") LocalDate date);
 
-    @Query("SELECT new map(a.servicoPreco.servico.nome as servico, COUNT(a) as count, SUM(a.servicoPreco.preco) as rentabilidade) FROM Agendamento a WHERE a.funcionario.empresa.id = :empresaId AND CAST(a.dtHora AS date) = :date GROUP BY a.servicoPreco.servico.nome ORDER BY COUNT(a) DESC")
+    @Query("SELECT new map(a.servicoPreco.servico.nome as servico, COUNT(a) as count, SUM(a.preco) as rentabilidade) FROM Agendamento a WHERE a.funcionario.empresa.id = :empresaId AND CAST(a.dtHora AS date) = :date GROUP BY a.servicoPreco.servico.nome ORDER BY COUNT(a) DESC")
     List<Map<String, Object>> getServicoMaisProcuradoERentabilidadeDoDia(@Param("empresaId") Integer empresaId, @Param("date") LocalDate date, Pageable pageable);
 
     @Query("SELECT new map(a.servicoPreco.servico.nome as servico, COUNT(a) as count) FROM Agendamento a WHERE a.funcionario.empresa.id = :empresaId AND CAST(a.dtHora AS date) = :date GROUP BY a.servicoPreco.servico.nome ORDER BY COUNT(a) DESC")
@@ -113,7 +113,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
     @Query("SELECT COUNT(DISTINCT a.cliente) FROM Agendamento a WHERE a.funcionario.id = :funcionarioId AND a.dtHora BETWEEN :dataInicio AND :dataFim")
     Integer countDistinctClienteByFuncionarioIdAndDtHoraBetween(Integer funcionarioId, LocalDateTime dataInicio, LocalDateTime dataFim);
 
-    @Query("SELECT SUM(a.servicoPreco.preco * a.servicoPreco.comissao) FROM Agendamento a WHERE a.funcionario.id = :funcionarioId AND a.dtHora BETWEEN :dataInicio AND :dataFim AND a.bitStatus = 5")
+    @Query("SELECT SUM(a.preco * a.comissao) FROM Agendamento a WHERE a.funcionario.id = :funcionarioId AND a.dtHora BETWEEN :dataInicio AND :dataFim AND a.bitStatus = 5")
     Double sumComissaoByFuncionarioIdAndDtHoraBetween(Integer funcionarioId, LocalDateTime dataInicio, LocalDateTime dataFim);
 
     @Modifying
@@ -131,7 +131,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
 
     //Somar a receita diária agrupada por dia
     @Query("SELECT new map(CAST(a.dtHora AS date) as data, " +
-            "SUM(a.servicoPreco.preco) as total) " +
+            "SUM(a.preco) as total) " +
             "FROM Agendamento a " +
             "WHERE a.funcionario.empresa.id = :empresaId " +
             "AND a.dtHora BETWEEN :dataInicio AND :dataFim " +
@@ -140,4 +140,12 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Intege
     List<Map<String, Object>> getReceitaDiaria(@Param("empresaId") Integer empresaId,
                                                @Param("dataInicio") LocalDateTime dataInicio,
                                                @Param("dataFim") LocalDateTime dataFim);
+
+    // recuperar listagem de agendamentos por dia
+    @Query("SELECT a FROM Agendamento a " +
+            "WHERE a.funcionario.empresa.id = :empresaId " +
+            "AND CAST(a.dtHora AS date) = :data AND a.bitStatus = 5 ORDER BY a.dtHora")
+    List<Agendamento> getAgendamentosDia(@Param("empresaId") Integer empresaId, @Param("data") LocalDate data);
+
+
 }

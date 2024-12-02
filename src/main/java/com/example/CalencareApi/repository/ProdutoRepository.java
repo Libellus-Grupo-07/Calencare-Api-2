@@ -21,6 +21,6 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
     @Query("SELECT p FROM Produto p " +
             "WHERE p.empresa.id = :idEmpresa " +
             "AND p.bitStatus = 1 " +
-            "ORDER BY p.categoriaProduto.nome, p.nome")
+            "ORDER BY UPPER(p.categoriaProduto.nome), UPPER(p.nome)")
     List<Produto> findAllByEmpresaId(Integer idEmpresa);
 }

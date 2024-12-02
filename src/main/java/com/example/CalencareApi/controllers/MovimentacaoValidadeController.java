@@ -1,5 +1,6 @@
 package com.example.CalencareApi.controllers;
 
+import com.example.CalencareApi.dto.produto.ProdutoConsultaDto;
 import com.example.CalencareApi.dto.validade.movimentacao.MovimentacaoValidadeConsultaDto;
 import com.example.CalencareApi.dto.validade.movimentacao.MovimentacaoValidadeCriacaoDto;
 import com.example.CalencareApi.service.MovimentacaoValidadeService;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/movimentacao-validade")
@@ -62,7 +62,7 @@ public class MovimentacaoValidadeController {
 
     @GetMapping("/quantidade/produto/{idProduto}")
     public ResponseEntity<Integer> retornarQuantidadeTodasValidadesProduto(@PathVariable Integer idProduto) {
-        Integer quantidade = movimentacaoValidadeService.retornarQuantidadeTodasValidadesProduto(idProduto);
+        Integer quantidade = movimentacaoValidadeService.retornarQuantidadeTotalProduto(idProduto);
         return ResponseEntity.ok(quantidade);
     }
 
@@ -78,6 +78,11 @@ public class MovimentacaoValidadeController {
         return ResponseEntity.ok(movimentacaoValidadeService.retornarQuantidadeProdutosBaixa(idEmpresa));
     }
 
+    @GetMapping("/kpi/estoque-muito-baixo/{idEmpresa}")
+    public ResponseEntity<Integer> retornarQuantidadeProdutosMuitoBaixa(@PathVariable Integer idEmpresa) {
+        return ResponseEntity.ok(movimentacaoValidadeService.retornarQuantidadeProdutosMuitoBaixa(idEmpresa));
+    }
+
     @GetMapping("/kpi/sem-estoque/{idEmpresa}")
     public ResponseEntity<Integer> retornarQuantidadeProdutosSemEstoque(@PathVariable Integer idEmpresa) {
         return ResponseEntity.ok(movimentacaoValidadeService.retornarQuantidadeProdutosSemEstoque(idEmpresa));
@@ -88,6 +93,15 @@ public class MovimentacaoValidadeController {
             @PathVariable Integer idEmpresa,
             @PathVariable LocalDate data) {
         return ResponseEntity.ok(movimentacaoValidadeService.retornarQuantidadeProdutosRepostosDia(idEmpresa, data));
+    }
+
+    @GetMapping("/listar-movimentacoes-produto/{idEmpresa}")
+    public ResponseEntity<List<MovimentacaoValidadeConsultaDto>> listarMovimentacoesEmpresa(@PathVariable Integer idEmpresa) {
+        List<MovimentacaoValidadeConsultaDto> movimentacoes = movimentacaoValidadeService.listarMovimentacoesEmpresa(idEmpresa);
+        if (movimentacoes.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(movimentacoes);
     }
 
 }

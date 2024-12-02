@@ -33,7 +33,7 @@ public class AgendamentoMapper {
         dto.setDia(agendamentoEntity.getDia());
         dto.setHorario(agendamentoEntity.getHorario());
         dto.setNomeFuncionario(agendamentoEntity.getFuncionario().getNome());
-        dto.setNomeCliente(agendamentoEntity.getCliente().getNome());
+        dto.setNomeCliente(agendamentoEntity.getCliente().getNome() + " " + agendamentoEntity.getCliente().getSobrenome() );
         dto.setNomeServico(agendamentoEntity.getServicoPreco().getServico().getNome());
         dto.setStatus(agendamentoEntity.getBitStatus());
         dto.setPreco(agendamentoEntity.getServicoPreco().getPreco());

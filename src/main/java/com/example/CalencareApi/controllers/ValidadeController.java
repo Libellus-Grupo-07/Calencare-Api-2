@@ -54,4 +54,12 @@ public class ValidadeController {
         return ResponseEntity.ok(true);
     }
 
+    @GetMapping("/empresa/{idEmpresa}")
+    public ResponseEntity<List<ValidadeConsultaDto>> buscarPorEmpresaId(@PathVariable Integer idEmpresa) {
+        if (validadeService.buscarPorEmpresaId(idEmpresa).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(validadeService.buscarPorEmpresaId(idEmpresa));
+    }
+
 }
